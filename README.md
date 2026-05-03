@@ -27,18 +27,18 @@ All subagents are instructed via [`utils/prompts.py`](langchain_docs_agent/utils
 
 ## Frontend & Backend Architecture
 
-The React UI streams agent output in real-time over **SSE** using `@langchain/langgraph-sdk`. The `useRunStream()` hook multiplexes a single stream into four live UI channels simultaneously.
+The React SPA streams agent output in real-time over **SSE** using `@langchain/langgraph-sdk`. Four custom hooks orchestrate the full lifecycle; a `BroadcastChannel`-based layer keeps every open browser tab in perfect sync — no WebSocket server required.
 
 ![Streaming Architecture](assets/streaming-architecture.png)
 
-| Stream mode | What it drives |
+| Hook | Responsibility |
 | --- | --- |
-| `messages/partial` | Streaming assistant text bubble (token by token) |
-| `values` | Live TODO checklist panel (planning steps) |
-| `events` → `on_tool_start/end` | Tool call steps in the sidebar |
-| `events` → `task` tool | Subagent dispatch badges |
+| `useThreadList` | Fetch + refresh the conversation list |
+| `useThreadState` | Load persisted thread history via `threads.getState` |
+| `useThreadRuns` | Own the live SSE stream; multiplex `messages-tuple`, `updates`, `events`, `tasks`, `debug`, `values` into streaming text + agent steps |
+| `useCrossTabSync` | BroadcastChannel relay — `run_progress`, `user_pending`, `thread_list_changed`, `run_started/finished` keep all tabs identical in real-time |
 
-In development, Vite proxies `/langgraph/*` → `http://localhost:8123` so the UI and agent server run on separate ports without CORS issues.
+The **LangGraph Agent Server** runs as a Docker container via `langgraph up` on `:8123`. Vite proxies `/langgraph/*` to it in development so the UI and agent server run on separate ports without CORS issues.
 
 ---
 
