@@ -17,7 +17,7 @@ flowchart TB
 
     subgraph experts["Domain Experts  ·  tools: LangChain Docs MCP + validate_url"]
         direction LR
-        LC["langchain-expert\nAgents · Tools · RAG · Middleware"]
+        LC["langchain-expert\nAgents · Tools · Middleware"]
         LG["langgraph-expert\nStateGraph · Checkpointers · Streaming"]
         LS["langsmith-expert\nTracing · Evaluation · Deployment"]
         DA["deepagents-expert\nHarness · Subagents · Skills"]
