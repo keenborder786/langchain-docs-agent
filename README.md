@@ -8,8 +8,6 @@ An agent that answers questions about the **LangChain ecosystem** — LangChain,
 
 ## Agent Architecture
 
-The agent is built on **[Deep Agents](https://docs.langchain.com/oss/python/deepagents/overview)** (`create_deep_agent`), which adds planning, multi-step orchestration, and subagent delegation on top of a standard tool-calling loop.
-
 ```mermaid
 %%{init: {"flowchart": {"rankSpacing": 65, "nodeSpacing": 35, "curve": "basis"}}}%%
 flowchart TB
