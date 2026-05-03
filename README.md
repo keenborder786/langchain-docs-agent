@@ -10,7 +10,76 @@ An agent that answers questions about the **LangChain ecosystem** — LangChain,
 
 The agent is built on **[Deep Agents](https://docs.langchain.com/oss/python/deepagents/overview)** (`create_deep_agent`), which adds planning, multi-step orchestration, and subagent delegation on top of a standard tool-calling loop.
 
-![Agent Architecture](assets/agent-architecture.png)
+```mermaid
+flowchart TB
+    User(["User message"])
+
+    Orch["<b>create_deep_agent</b> · Deep Agents harness<br/><sub>Planning · write_todos · virtual filesystem · multi-step orchestration</sub>"]
+
+    LC["<b>langchain-expert</b><br/><sub>Agents · Tools · RAG · Middleware</sub>"]
+    LG["<b>langgraph-expert</b><br/><sub>StateGraph · Checkpointers · Streaming</sub>"]
+    LS["<b>langsmith-expert</b><br/><sub>Tracing · Evaluation · Deployment</sub>"]
+    DA["<b>deepagents-expert</b><br/><sub>Harness · Subagents · Skills</sub>"]
+    QC["<b>quality-control</b><br/><sub>Grounding · API accuracy · Citations</sub>"]
+    FR["<b>forum-researcher</b><br/><sub>Community cross-check on forum.langchain.com</sub>"]
+
+    MCP[("<b>LangChain Docs MCP</b><br/><sub>docs.langchain.com/mcp · search · filesystem</sub>")]
+    FT[("<b>Forum Tools</b><br/><sub>search_forum_posts · get_forum_topic</sub>")]
+    VU{{"<b>validate_url</b><br/><sub>HTTP link reachability — shared by every node</sub>"}}
+
+    User <-->|query / final answer| Orch
+
+    Orch -->|delegate| LC
+    Orch -->|delegate| LG
+    Orch -->|delegate| LS
+    Orch -->|delegate| DA
+    Orch -->|after draft| QC
+    Orch -->|on errors / regressions| FR
+
+    LC -.->|findings| Orch
+    LG -.->|findings| Orch
+    LS -.->|findings| Orch
+    DA -.->|findings| Orch
+    QC -.->|verification report| Orch
+    FR -.->|cross-check result| Orch
+
+    LC ==> MCP
+    LG ==> MCP
+    LS ==> MCP
+    DA ==> MCP
+    QC ==> MCP
+    Orch ==> MCP
+
+    FR ==> FT
+
+    LC --> VU
+    LG --> VU
+    LS --> VU
+    DA --> VU
+    QC --> VU
+    FR --> VU
+    Orch --> VU
+
+    classDef user fill:#1a2756,stroke:#1a2756,color:#fff
+    classDef orch fill:#1e3a8a,stroke:#1e3a8a,color:#fff
+    classDef sub fill:#dbeafe,stroke:#1e3a8a,color:#0c1a4a
+    classDef tool fill:#fef3c7,stroke:#92400e,color:#78350f
+    classDef shared fill:#dcfce7,stroke:#15803d,color:#14532d
+
+    class User user
+    class Orch orch
+    class LC,LG,LS,DA,QC,FR sub
+    class MCP,FT tool
+    class VU shared
+```
+
+Wiring (verified against [`agent.py`](langchain_docs_agent/agent.py) and [`utils/subagents.py`](langchain_docs_agent/utils/subagents.py)):
+
+| Node | Tools it actually has |
+| --- | --- |
+| `create_deep_agent` (orchestrator) | Built-in `write_todos` + virtual filesystem + task delegation, **plus** `LangChain Docs MCP` and `validate_url` |
+| `langchain-expert`, `langgraph-expert`, `langsmith-expert`, `deepagents-expert`, `quality-control` | `LangChain Docs MCP` + `validate_url` |
+| `forum-researcher` | `Forum Tools` (`search_forum_posts`, `get_forum_topic`) + `validate_url` — **does not touch the docs MCP** |
 
 | Subagent | Responsibility |
 | --- | --- |
