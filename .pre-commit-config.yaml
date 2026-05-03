@@ -1,15 +1,74 @@
+# Pre-commit configuration for langchain-docs-agent
+# Mirrors formatting and linting setup from the Makefile
+
 repos:
+  # Ruff - Python linter and formatter (replaces black, isort, flake8, etc.)
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.4
+    rev: v0.6.2
     hooks:
+      # Ruff linter
       - id: ruff
+        name: ruff-lint
+        description: "Run ruff linter"
         args: [--fix]
         types_or: [python, pyi]
-      - id: ruff-format
+        exclude: ^(alembic/env\.py|alembic/versions/.*)$
 
+      # Ruff formatter
+      - id: ruff-format
+        name: ruff-format
+        description: "Run ruff formatter"
+        types_or: [python, pyi]
+        exclude: ^(alembic/env\.py|alembic/versions/.*)$
+
+  # Built-in pre-commit hooks for general file hygiene
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v4.6.0
     hooks:
       - id: trailing-whitespace
+        name: trim-whitespace
+        description: "Trim trailing whitespace"
+
       - id: end-of-file-fixer
+        name: fix-end-of-file
+        description: "Ensure files end with a newline"
+
       - id: check-yaml
+        name: check-yaml
+        description: "Check YAML syntax"
+
+      - id: check-toml
+        name: check-toml
+        description: "Check TOML syntax"
+
+      - id: check-json
+        name: check-json
+        description: "Check JSON syntax"
+
+      - id: check-merge-conflict
+        name: check-merge-conflict
+        description: "Check for merge conflict markers"
+
+      - id: check-added-large-files
+        name: check-large-files
+        description: "Check for large files"
+        args: [--maxkb=3000]  # 3MB limit
+
+      - id: mixed-line-ending
+        name: fix-line-endings
+        description: "Fix mixed line endings"
+        args: [--fix=lf]
+
+# Global configuration
+default_stages: [pre-commit]
+fail_fast: false
+minimum_pre_commit_version: "3.0.0"
+
+# Exclude patterns
+exclude: |
+  (?x)^(
+    .*/__pycache__/.*|
+    .*/\.git/.*|
+    .*\.pyc$|
+    .*\.pyo$
+  )$
