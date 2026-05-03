@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base ──────────────────────────────────────────────────── */
+body {
+  @apply bg-lc-surface text-lc-ink antialiased font-ui;
+}
+
+#root {
+  @apply min-h-screen;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────── */
+@keyframes message-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes thinking-dot {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Utility classes ────────────────────────────────────────── */
+.animate-message-in {
+  animation: message-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-step-in {
+  animation: step-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease both;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-cursor {
+  animation: cursor-blink 0.9s step-end infinite;
+}
+
+.dot-1 { animation: thinking-dot 1.2s ease infinite 0ms; }
+.dot-2 { animation: thinking-dot 1.2s ease infinite 160ms; }
+.dot-3 { animation: thinking-dot 1.2s ease infinite 320ms; }
+
+/* ─── Markdown content ───────────────────────────────────────── */
+.prose-lc {
+  @apply text-[15px] leading-[1.7] text-lc-ink;
+}
+
+.prose-lc h1, .prose-lc h2, .prose-lc h3 {
+  @apply font-semibold tracking-tight mt-5 mb-2;
+}
+.prose-lc h1 { @apply text-xl; }
+.prose-lc h2 { @apply text-lg; }
+.prose-lc h3 { @apply text-base; }
+
+.prose-lc p { @apply mb-3 last:mb-0; }
+
+.prose-lc ul { @apply list-disc pl-5 mb-3 space-y-1; }
+.prose-lc ol { @apply list-decimal pl-5 mb-3 space-y-1; }
+.prose-lc li { @apply leading-relaxed; }
+
+.prose-lc a {
+  @apply text-lc-deep underline underline-offset-2 hover:text-lc-ink transition-colors;
+}
+
+.prose-lc code {
+  @apply rounded-md bg-lc-muted px-1.5 py-0.5 font-mono text-[13px] text-lc-ink;
+}
+
+.prose-lc pre {
+  @apply rounded-xl bg-lc-ink text-white p-4 overflow-x-auto text-[13px] leading-relaxed my-3;
+}
+
+.prose-lc pre code {
+  @apply bg-transparent text-inherit p-0;
+}
+
+.prose-lc blockquote {
+  @apply border-l-2 border-lc-brand pl-4 italic text-lc-ink-muted my-3;
+}
+
+.prose-lc table { @apply w-full text-sm my-3 border-collapse; }
+.prose-lc th { @apply bg-lc-muted px-3 py-2 text-left font-semibold border border-lc-border; }
+.prose-lc td { @apply px-3 py-2 border border-lc-border; }
+
+.prose-lc strong { @apply font-semibold; }
+.prose-lc em { @apply italic; }
+.prose-lc hr { @apply border-lc-border my-4; }

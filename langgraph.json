@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "docs_agent": "./langchain_docs_agent/agent.py:graph"
+  },
+  "env": "./.env",
+  "python_version": "3.12"
+}
