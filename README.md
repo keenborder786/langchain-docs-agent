@@ -11,66 +11,67 @@ An agent that answers questions about the **LangChain ecosystem** — LangChain,
 The agent is built on **[Deep Agents](https://docs.langchain.com/oss/python/deepagents/overview)** (`create_deep_agent`), which adds planning, multi-step orchestration, and subagent delegation on top of a standard tool-calling loop.
 
 ```mermaid
+%%{init: {'flowchart': {'htmlLabels': true, 'curve': 'basis', 'nodeSpacing': 55, 'rankSpacing': 70}}}%%
 flowchart TB
-    User(["User message"])
+    User(["<b>User message</b>"])
 
-    Orch["<b>create_deep_agent</b> · Deep Agents harness<br/><sub>Planning · write_todos · virtual filesystem · multi-step orchestration</sub>"]
+    Orch("<b>create_deep_agent</b><br/><i>Deep Agents harness</i><br/><sub>write_todos · virtual filesystem · multi-step orchestration</sub>")
 
-    LC["<b>langchain-expert</b><br/><sub>Agents · Tools · RAG · Middleware</sub>"]
-    LG["<b>langgraph-expert</b><br/><sub>StateGraph · Checkpointers · Streaming</sub>"]
-    LS["<b>langsmith-expert</b><br/><sub>Tracing · Evaluation · Deployment</sub>"]
-    DA["<b>deepagents-expert</b><br/><sub>Harness · Subagents · Skills</sub>"]
-    QC["<b>quality-control</b><br/><sub>Grounding · API accuracy · Citations</sub>"]
-    FR["<b>forum-researcher</b><br/><sub>Community cross-check on forum.langchain.com</sub>"]
+    LC("<b>langchain-expert</b><br/><sub>Agents · Tools · RAG · Middleware</sub>")
+    LG("<b>langgraph-expert</b><br/><sub>StateGraph · Checkpointers · Streaming</sub>")
+    LS("<b>langsmith-expert</b><br/><sub>Tracing · Evaluation · Deployment</sub>")
+    DA("<b>deepagents-expert</b><br/><sub>Harness · Subagents · Skills</sub>")
+    QC("<b>quality-control</b><br/><sub>Grounding · API accuracy · Citations</sub>")
+    FR("<b>forum-researcher</b><br/><sub>Community cross-check</sub>")
 
-    MCP[("<b>LangChain Docs MCP</b><br/><sub>docs.langchain.com/mcp · search · filesystem</sub>")]
-    FT[("<b>Forum Tools</b><br/><sub>search_forum_posts · get_forum_topic</sub>")]
-    VU{{"<b>validate_url</b><br/><sub>HTTP link reachability — shared by every node</sub>"}}
+    MCP{{"<b>LangChain Docs MCP</b><br/><sub>docs.langchain.com/mcp</sub>"}}
+    FT{{"<b>Forum Tools</b><br/><sub>search_forum_posts · get_forum_topic</sub>"}}
+    VU{{"<b>validate_url</b><br/><sub>link reachability check</sub>"}}
 
-    User <-->|query / final answer| Orch
+    User <==>|query / final answer| Orch
 
-    Orch -->|delegate| LC
-    Orch -->|delegate| LG
-    Orch -->|delegate| LS
-    Orch -->|delegate| DA
-    Orch -->|after draft| QC
-    Orch -->|on errors / regressions| FR
+    Orch ==>|delegate| LC
+    Orch ==>|delegate| LG
+    Orch ==>|delegate| LS
+    Orch ==>|delegate| DA
+    Orch ==>|after draft| QC
+    Orch ==>|on errors / regressions| FR
 
     LC -.->|findings| Orch
     LG -.->|findings| Orch
     LS -.->|findings| Orch
     DA -.->|findings| Orch
-    QC -.->|verification report| Orch
-    FR -.->|cross-check result| Orch
+    QC -.->|verification| Orch
+    FR -.->|cross-check| Orch
 
-    LC ==> MCP
-    LG ==> MCP
-    LS ==> MCP
-    DA ==> MCP
-    QC ==> MCP
-    Orch ==> MCP
+    LC --> MCP
+    LG --> MCP
+    LS --> MCP
+    DA --> MCP
+    QC --> MCP
+    Orch --> MCP
 
-    FR ==> FT
+    FR --> FT
 
-    LC --> VU
-    LG --> VU
-    LS --> VU
-    DA --> VU
-    QC --> VU
-    FR --> VU
-    Orch --> VU
+    LC -.-> VU
+    LG -.-> VU
+    LS -.-> VU
+    DA -.-> VU
+    QC -.-> VU
+    FR -.-> VU
+    Orch -.-> VU
 
-    classDef user fill:#1a2756,stroke:#1a2756,color:#fff
-    classDef orch fill:#1e3a8a,stroke:#1e3a8a,color:#fff
-    classDef sub fill:#dbeafe,stroke:#1e3a8a,color:#0c1a4a
-    classDef tool fill:#fef3c7,stroke:#92400e,color:#78350f
-    classDef shared fill:#dcfce7,stroke:#15803d,color:#14532d
+    classDef user fill:#0f172a,stroke:#0f172a,stroke-width:2px,color:#ffffff
+    classDef orch fill:#1d4ed8,stroke:#1e3a8a,stroke-width:2px,color:#ffffff
+    classDef sub fill:#eff6ff,stroke:#1d4ed8,stroke-width:1.5px,color:#0f172a
+    classDef tool fill:#dcfce7,stroke:#15803d,stroke-width:1.5px,color:#14532d
 
     class User user
     class Orch orch
     class LC,LG,LS,DA,QC,FR sub
-    class MCP,FT tool
-    class VU shared
+    class MCP,FT,VU tool
+
+    linkStyle default stroke:#94a3b8,stroke-width:1.2px
 ```
 
 Wiring (verified against [`agent.py`](langchain_docs_agent/agent.py) and [`utils/subagents.py`](langchain_docs_agent/utils/subagents.py)):
