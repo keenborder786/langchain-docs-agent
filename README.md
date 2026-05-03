@@ -60,26 +60,6 @@ flowchart TB
     class LC,LG,LS,DA,QC,FR sub
     class MCP,FT,VU tool
 ```
-
-Wiring (verified against [`agent.py`](langchain_docs_agent/agent.py) and [`utils/subagents.py`](langchain_docs_agent/utils/subagents.py)):
-
-| Node | Tools it actually has |
-| --- | --- |
-| `create_deep_agent` (orchestrator) | Built-in `write_todos` + virtual filesystem + task delegation, **plus** `LangChain Docs MCP` and `validate_url` |
-| `langchain-expert`, `langgraph-expert`, `langsmith-expert`, `deepagents-expert`, `quality-control` | `LangChain Docs MCP` + `validate_url` |
-| `forum-researcher` | `Forum Tools` (`search_forum_posts`, `get_forum_topic`) + `validate_url` — **does not touch the docs MCP** |
-
-| Subagent | Responsibility |
-| --- | --- |
-| `langchain-expert` | LangChain agents, tools, RAG, retrieval, models, middleware |
-| `langgraph-expert` | StateGraph, checkpointers, persistence, interrupts, streaming |
-| `langsmith-expert` | Observability, tracing, evaluation, datasets, deployment |
-| `deepagents-expert` | Deep Agents harness, subagents, planning, filesystem, skills |
-| `quality-control` | Post-draft validation — grounding, API accuracy, citations |
-| `forum-researcher` | Cross-checks answers against community threads on forum.langchain.com |
-
-All subagents are instructed via [`utils/prompts.py`](langchain_docs_agent/utils/prompts.py) to **never invent APIs**, cite evidence from MCP output, and flag gaps when docs are silent.
-
 ---
 
 ## Frontend & Backend Architecture
