@@ -11,67 +11,54 @@ An agent that answers questions about the **LangChain ecosystem** — LangChain,
 The agent is built on **[Deep Agents](https://docs.langchain.com/oss/python/deepagents/overview)** (`create_deep_agent`), which adds planning, multi-step orchestration, and subagent delegation on top of a standard tool-calling loop.
 
 ```mermaid
-%%{init: {'flowchart': {'htmlLabels': true, 'curve': 'basis', 'nodeSpacing': 55, 'rankSpacing': 70}}}%%
+%%{init: {"flowchart": {"rankSpacing": 65, "nodeSpacing": 35, "curve": "basis"}}}%%
 flowchart TB
-    User(["<b>User message</b>"])
+    User(["👤 User message"])
 
-    Orch("<b>create_deep_agent</b><br/><i>Deep Agents harness</i><br/><sub>write_todos · virtual filesystem · multi-step orchestration</sub>")
+    Orch["🧠 create_deep_agent\n── Deep Agents harness ──\nwrite_todos · planning · orchestration"]
 
-    LC("<b>langchain-expert</b><br/><sub>Agents · Tools · RAG · Middleware</sub>")
-    LG("<b>langgraph-expert</b><br/><sub>StateGraph · Checkpointers · Streaming</sub>")
-    LS("<b>langsmith-expert</b><br/><sub>Tracing · Evaluation · Deployment</sub>")
-    DA("<b>deepagents-expert</b><br/><sub>Harness · Subagents · Skills</sub>")
-    QC("<b>quality-control</b><br/><sub>Grounding · API accuracy · Citations</sub>")
-    FR("<b>forum-researcher</b><br/><sub>Community cross-check</sub>")
+    subgraph experts["Domain Experts  ·  tools: LangChain Docs MCP + validate_url"]
+        direction LR
+        LC["langchain-expert\nAgents · Tools · RAG · Middleware"]
+        LG["langgraph-expert\nStateGraph · Checkpointers · Streaming"]
+        LS["langsmith-expert\nTracing · Evaluation · Deployment"]
+        DA["deepagents-expert\nHarness · Subagents · Skills"]
+        QC["quality-control\nGrounding · API accuracy · Citations"]
+    end
 
-    MCP{{"<b>LangChain Docs MCP</b><br/><sub>docs.langchain.com/mcp</sub>"}}
-    FT{{"<b>Forum Tools</b><br/><sub>search_forum_posts · get_forum_topic</sub>"}}
-    VU{{"<b>validate_url</b><br/><sub>link reachability check</sub>"}}
+    FR["forum-researcher\nforum.langchain.com cross-check\ntools: Forum Tools + validate_url"]
 
-    User <==>|query / final answer| Orch
+    MCP{{"LangChain Docs MCP\ndocs.langchain.com/mcp"}}
+    FT{{"Forum Tools\nsearch_forum_posts\nget_forum_topic"}}
+    VU{{"validate_url\nHTTP link reachability"}}
 
-    Orch ==>|delegate| LC
-    Orch ==>|delegate| LG
-    Orch ==>|delegate| LS
-    Orch ==>|delegate| DA
-    Orch ==>|after draft| QC
+    User -->|query| Orch
+    Orch -->|final answer| User
+
+    Orch ==>|delegate| experts
     Orch ==>|on errors / regressions| FR
 
-    LC -.->|findings| Orch
-    LG -.->|findings| Orch
-    LS -.->|findings| Orch
-    DA -.->|findings| Orch
-    QC -.->|verification| Orch
-    FR -.->|cross-check| Orch
+    experts -.->|findings + verification report| Orch
+    FR -.->|cross-check result| Orch
 
-    LC --> MCP
-    LG --> MCP
-    LS --> MCP
-    DA --> MCP
-    QC --> MCP
+    experts --> MCP
     Orch --> MCP
 
     FR --> FT
 
-    LC -.-> VU
-    LG -.-> VU
-    LS -.-> VU
-    DA -.-> VU
-    QC -.-> VU
+    experts -.-> VU
     FR -.-> VU
     Orch -.-> VU
 
-    classDef user fill:#0f172a,stroke:#0f172a,stroke-width:2px,color:#ffffff
-    classDef orch fill:#1d4ed8,stroke:#1e3a8a,stroke-width:2px,color:#ffffff
+    classDef user fill:#0f172a,stroke:#334155,stroke-width:2px,color:#ffffff
+    classDef orch fill:#1d4ed8,stroke:#1e40af,stroke-width:2px,color:#ffffff
     classDef sub fill:#eff6ff,stroke:#1d4ed8,stroke-width:1.5px,color:#0f172a
-    classDef tool fill:#dcfce7,stroke:#15803d,stroke-width:1.5px,color:#14532d
+    classDef tool fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
 
     class User user
     class Orch orch
     class LC,LG,LS,DA,QC,FR sub
     class MCP,FT,VU tool
-
-    linkStyle default stroke:#94a3b8,stroke-width:1.2px
 ```
 
 Wiring (verified against [`agent.py`](langchain_docs_agent/agent.py) and [`utils/subagents.py`](langchain_docs_agent/utils/subagents.py)):
