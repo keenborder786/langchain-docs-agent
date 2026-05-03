@@ -34,7 +34,7 @@ flowchart TB
     Orch -->|final answer| User
 
     Orch ==>|delegate| experts
-    Orch ==>|on errors / regressions| FR
+    Orch ==>|on specific errors questions / on recent trends / cross checking | FR
 
     experts -.->|findings + verification report| Orch
     FR -.->|cross-check result| Orch
