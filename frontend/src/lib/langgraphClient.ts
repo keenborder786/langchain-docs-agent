@@ -5,8 +5,8 @@ import { Client } from "@langchain/langgraph-sdk";
  *
  * The SDK uses the `URL` constructor internally, which requires an absolute URL.
  * - Dev (default): resolve `/langgraph` against the current origin so Vite can
- *   proxy it to the Agent Server (e.g. http://localhost:2024).
- * - Direct: set `VITE_LANGGRAPH_API_URL=http://localhost:2024` (requires CORS).
+ *   proxy it to the Agent Server (`langgraph up` runs on http://localhost:8123).
+ * - Direct: set `VITE_LANGGRAPH_API_URL=http://localhost:8123` (requires CORS).
  */
 function resolveApiUrl(): string {
   const fromEnv = import.meta.env.VITE_LANGGRAPH_API_URL?.trim();
