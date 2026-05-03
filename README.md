@@ -99,16 +99,21 @@ make frontend-dev
 
 | Variable | Purpose |
 | --- | --- |
-| `DOCS_AGENT_MODEL` | Model id, e.g. `openai:gpt-4.1` or `anthropic:claude-sonnet-4-20250514` |
+| `DOCS_AGENT_MODEL` | Model id, e.g. `anthropic:claude-sonnet-4-6` |
 | `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` | Provider key matching the model prefix |
 | `LANGCHAIN_DOCS_MCP_URL` | Optional. Defaults to `https://docs.langchain.com/mcp` |
 | `LANGCHAIN_API_KEY` / `LANGCHAIN_TRACING_V2` | Optional LangSmith tracing |
 
 ---
 
-## Production Version
+## Roadmap
 
-- **Production release** — Dockerized deployment with durable Postgres/Redis checkpointing, auth, and rate-limit handling. Will only release a Production Version if enough interest is generated.
+| Status | Item | Description |
+| --- | --- | --- |
+| 🔜 | **Animated concept explainers** | Auto-generate step-by-step SVG/canvas animations for complex topics (e.g. how LangGraph checkpointing works, how a StateGraph executes), rendered inline in the chat response |
+| 🔜 | **Video tutorial generation** | Convert agent answers into narrated screencasts — slide deck + voiceover — exported as MP4, covering code walkthroughs and multi-step workflows |
+| 🔜 | **Audio tutorials** | Text-to-speech synthesis of answers so users can listen to documentation explanations hands-free; downloadable as MP3 with chapter markers |
+
 
 ## License
 
