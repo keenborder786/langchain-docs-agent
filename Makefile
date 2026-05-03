@@ -1,6 +1,6 @@
 # LangChain docs agent — Makefile (patterns adapted from caire-backend)
 
-.PHONY: help format lint dev dev-all sync lock clean \
+.PHONY: help format lint up up-all sync lock clean \
 	pre-commit pre-commit-install pre-commit-update \
 	frontend-dev frontend-install
 
@@ -19,13 +19,13 @@ lint: ## Run linting and type checking
 	uv run ruff format langchain_docs_agent --diff
 	uv run mypy langchain_docs_agent
 
-dev: ## Run LangGraph dev server (needs .env with REDIS_URL and API keys)
-	uv run langgraph dev --n-jobs-per-worker 20
+up: ## Run LangGraph server via Docker (needs .env and Docker running)
+	uv run langgraph up
 
-dev-all: ## Run Agent Server + Vite UI together (same as ./scripts/dev-all.sh)
-	./scripts/dev-all.sh
+up-all: ## Run Agent Server + Vite UI together (same as ./scripts/up-all.sh)
+	./scripts/up-all.sh
 
-frontend-dev: ## Run Vite React UI (proxies /langgraph → localhost:2024; start `make dev` in another terminal)
+frontend-dev: ## Run Vite React UI (proxies /langgraph → localhost:8123; start `make up` in another terminal)
 	cd frontend && npm run dev
 
 frontend-install: ## npm install for frontend/

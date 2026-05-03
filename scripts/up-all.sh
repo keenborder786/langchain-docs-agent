@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Start LangGraph Agent Server and the Vite frontend together (development).
-# Prerequisites: uv, Node/npm, Redis (see README). Copy .env.example → .env first.
+# Start LangGraph Agent Server (via Docker) and the Vite frontend together.
+# Prerequisites: uv, Node/npm, Docker (see README). Copy .env.example → .env first.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -31,6 +31,14 @@ if ! command -v npm >/dev/null 2>&1; then
   echo "error: npm is not installed" >&2
   exit 1
 fi
+if ! command -v docker >/dev/null 2>&1; then
+  echo "error: docker is not installed (https://docs.docker.com/get-docker/)" >&2
+  exit 1
+fi
+if ! docker info >/dev/null 2>&1; then
+  echo "error: Docker daemon is not running — please start Docker and try again." >&2
+  exit 1
+fi
 
 if [[ ! -f "${ROOT}/.env" ]]; then
   echo "warning: ${ROOT}/.env not found — copy .env.example to .env and set your API keys." >&2
@@ -42,13 +50,13 @@ if [[ ! -d "${ROOT}/frontend/node_modules" ]]; then
 fi
 
 echo ""
-echo "Starting LangGraph dev server (backend) and Vite (frontend)."
-echo "  • Agent API:    http://localhost:2024 (default; Vite proxies /langgraph → here)"
+echo "Starting LangGraph server (Docker) and Vite (frontend)."
+echo "  • Agent API:    http://localhost:8123 (Vite proxies /langgraph → here)"
 echo "  • Web UI:       http://localhost:5173"
 echo "Press Ctrl+C to stop both."
 echo ""
 
-uv run langgraph dev --n-jobs-per-worker 20 &
+uv run langgraph up &
 LG_PID=$!
 
 (cd "${ROOT}/frontend" && npm run dev) &

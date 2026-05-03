@@ -38,7 +38,7 @@ The React UI streams agent output in real-time over **SSE** using `@langchain/la
 | `events` → `on_tool_start/end` | Tool call steps in the sidebar |
 | `events` → `task` tool | Subagent dispatch badges |
 
-In development, Vite proxies `/langgraph/*` → `http://localhost:2024` so the UI and agent server run on separate ports without CORS issues.
+In development, Vite proxies `/langgraph/*` → `http://localhost:8123` so the UI and agent server run on separate ports without CORS issues.
 
 ---
 
@@ -50,6 +50,7 @@ In development, Vite proxies `/langgraph/*` → `http://localhost:2024` so the U
 | --- | --- |
 | [uv](https://docs.astral.sh/uv/) | Python deps + `langgraph` CLI |
 | Node.js + npm | Vite/React UI in `frontend/` |
+| [Docker](https://docs.docker.com/get-docker/) | Required by `langgraph up` to run the agent server |
 
 You also need an LLM provider API key. Set **`OPENAI_API_KEY`** or **`ANTHROPIC_API_KEY`** depending on which model you choose.
 
@@ -74,7 +75,7 @@ make frontend-install
 
 ```bash
 # Backend + frontend together (recommended)
-make dev-all
+make up-all
 ```
 
 Then open **http://localhost:5173**.
@@ -82,13 +83,13 @@ Then open **http://localhost:5173**.
 | Service | URL |
 | --- | --- |
 | Web UI (Vite) | http://localhost:5173 |
-| LangGraph Agent Server | http://localhost:2024 |
+| LangGraph Agent Server | http://localhost:8123 |
 
 **Two-terminal alternative:**
 
 ```bash
-# Terminal 1 — agent server
-make dev
+# Terminal 1 — agent server (Docker)
+make up
 
 # Terminal 2 — web UI
 make frontend-dev

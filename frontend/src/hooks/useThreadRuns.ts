@@ -237,6 +237,15 @@ export function useThreadRuns(
   const abortControllers = useRef<Map<string, AbortController>>(new Map());
   const threadRefs = useRef<Map<string, ThreadRefs>>(new Map());
 
+  // Threads where THIS tab owns the live SSE stream. Used by the cross-tab
+  // sync layer to know which run snapshots to broadcast (so we never echo
+  // back snapshots received from another tab).
+  const ownedThreadIds = useRef<Set<string>>(new Set());
+  const isThreadOwnedLocally = useCallback(
+    (threadId: string) => ownedThreadIds.current.has(threadId),
+    [],
+  );
+
   const updateRun = useCallback(
     (threadId: string, updater: (prev: ThreadRunState) => ThreadRunState) => {
       setRuns((prev) => {
@@ -269,6 +278,9 @@ export function useThreadRuns(
       const ac = new AbortController();
       abortControllers.current.set(threadId, ac);
       threadRefs.current.set(threadId, newThreadRefs());
+      // This tab now owns the SSE stream for this thread, so the cross-tab
+      // broadcaster will publish its run progress to other tabs.
+      ownedThreadIds.current.add(threadId);
 
       // Reset this thread's slice — old thinking/steps disappear immediately
       // when a new message starts.
@@ -736,12 +748,29 @@ export function useThreadRuns(
         abortControllers.current.delete(threadId);
       }
       threadRefs.current.delete(threadId);
+      ownedThreadIds.current.delete(threadId);
       setRuns((prev) => {
         if (!(threadId in prev)) return prev;
         const next = { ...prev };
         delete next[threadId];
         return next;
       });
+    },
+    [],
+  );
+
+  /**
+   * Replace this thread's run snapshot with one received from another tab.
+   * Used by the cross-tab sync layer so shadow tabs can render the same
+   * live streaming text + agent steps as the tab that owns the SSE stream.
+   *
+   * Skipped for threads this tab owns locally — that would clobber our
+   * authoritative state with a snapshot we just published ourselves.
+   */
+  const applyExternalRunSnapshot = useCallback(
+    (threadId: string, snapshot: ThreadRunState) => {
+      if (ownedThreadIds.current.has(threadId)) return;
+      setRuns((prev) => ({ ...prev, [threadId]: snapshot }));
     },
     [],
   );
@@ -766,8 +795,11 @@ export function useThreadRuns(
     sendMessage,
     cancel,
     getRunState,
+    runs,
     runningThreadIds,
     clearStreamingForThread,
     clearRunForThread,
+    isThreadOwnedLocally,
+    applyExternalRunSnapshot,
   };
 }
